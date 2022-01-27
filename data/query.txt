@@ -1,0 +1,27 @@
+PREFIX ns: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX tg:<http://www.turnguard.com/functions#>
+
+PREFIX ds: <https://data.cityofchicago.org/resource/k7hf-8y75/>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX ods: <http://open-data-standards.github.com/2012/01/open-data-standards#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX dcterm: <http://purl.org/dc/terms/#>
+PREFIX dsbase: <https://data.cityofchicago.org/resource/#>
+PREFIX socrata: <http://www.socrata.com/rdf/terms#>
+PREFIX ns: <http://www.semanticweb.org/ilyes/ontologies/2022/0/iot_tp#>
+
+SELECT ?m ?v
+WHERE {
+    ?m rdf:type ns:isHot.
+    ?m ns:air_temperature ?v
+}
