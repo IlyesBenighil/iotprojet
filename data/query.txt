@@ -20,7 +20,7 @@ PREFIX dsbase: <https://data.cityofchicago.org/resource/#>
 PREFIX socrata: <http://www.socrata.com/rdf/terms#>
 PREFIX ns: <http://www.semanticweb.org/ilyes/ontologies/2022/0/iot_tp#>
 
-SELECT ?t ?v
-WHERE {
-    ?t  ns:measurement_timestamp ?v
-}
+ SELECT ?m ?t ?h ?r WHERE {
+     ?m rdf:type ns:Mesure.
+     ?m rdf:type ns:notRaining
+     }

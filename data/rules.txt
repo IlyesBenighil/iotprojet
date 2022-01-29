@@ -26,7 +26,11 @@
 @prefix ns: <http://www.semanticweb.org/ilyes/ontologies/2022/0/iot_tp#>
 
 @include <OWL>
-[rule1: (?mes rdf:type ns:Mesure) (?mes ns:air_temperature ?val) greaterThan(?val, 18)   ->  (?mes rdf:type ns:isHot)]
-[rule2: (?mes rdf:type ns:Mesure) (?mes ns:rain_intensity ?val) greaterThan(?val,0) -> (?mes rdf:type ns:raining)]
-[rule3: (?mes rdf:type ns:Mesure) (?mes ns:wind_speed ?val) greaterThan(?val,10) -> (?mes rdf:type ns:winding)]
-[rule3: (?mes rdf:type ns:Mesure) (?mes ns:solar_radiation ?val) greaterThan(?val,500) -> (?mes rdf:type ns:sunny)]
+[rule1: (?mes rdf:type ns:Mesure) (?mes ns:air_temperature ?val) greaterThan(?val, 18)   ->  (?mes rdf:type ns:isAd)]
+[rule2: (?mes rdf:type ns:Mesure) (?mes ns:rain_intensity ?val) greaterThan(?val,0.0)   ->  (?mes rdf:type ns:raining)]
+[rule3: (?mes rdf:type ns:Mesure) (?mes ns:wind_speed ?val) greaterThan(?val,3) -> (?mes rdf:type ns:winding)]
+[rule4: (?mes rdf:type ns:Mesure) (?mes ns:solar_radiation ?val) greaterThan(?val,500) -> (?mes rdf:type ns:sunny)]
+
+[rule5: (?mes rdf:type ns:Mesure) (?mes ns:rain_intensity ?val) lessThan(?val,0.1)   ->  (?mes rdf:type ns:notRaining)]
+[rule6: (?mes rdf:type ns:Mesure) (?mes ns:wind_speed ?val) greaterThan(3,?val) -> (?mes rdf:type ns:notWinding)]
+[rule7: (?mes rdf:type ns:Mesure) (?mes ns:solar_radiation ?val) greaterThan(500,?va) -> (?mes rdf:type ns:notSunny)]

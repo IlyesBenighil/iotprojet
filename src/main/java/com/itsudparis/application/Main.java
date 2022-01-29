@@ -56,7 +56,7 @@ public class Main {
 					i++;
 					if (i == 1) {
 						continue;
-					} else if (i > 100) {
+					} else if (i > 1000) {
 						break;
 					}
 					JenaEngine.createInstanceOfClass(model, NS, "Mesure", csvrow[17]);
@@ -141,26 +141,69 @@ public class Main {
 					mapp.put("wind_speed", myObj.nextLine());
 					break;
 				case 4:
-					System.out.println("Voulez vous du soleil ?(oui,non ou un peu) ");
+					System.out.println("Voulez vous du soleil ?(oui ou non) ");
 					mapp.put("solar_radiation", myObj.nextLine());
 					break;
 				default:
 					break;
 			}
 		}
-		String prefix = "PREFIX ns: <http://www.semanticweb.org/ilyes/ontologies/2022/0/iot_tp#> PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ";
+		Model owlInferencedModel = JenaEngine.readInferencedModelFromRuleFile(model, "data/owlrules.txt");
+		// apply our rules on the owlInferencedModel
+		Model inferedModel = JenaEngine.readInferencedModelFromRuleFile(owlInferencedModel, "data/rules.txt");
+		String prefix = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX ns: <http://www.semanticweb.org/ilyes/ontologies/2022/0/iot_tp#> PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ";
+		String q = ("SELECT ?m ?t ?h ?r ?w ?s WHERE {");
 		for (String key : mapp.keySet()) {
-			String q = String.format("SELECT ?t ?v WHERE { ?t  ns:%s ?v}", key);
-			Query query = QueryFactory.create(q);
-			QueryExecution qe = QueryExecutionFactory.create(prefix + query, model);
-			com.hp.hpl.jena.query.ResultSet results = qe.execSelect();
-			for (; results.hasNext();) {
-				QuerySolution soln = results.nextSolution();
-				RDFNode t = soln.get("t");
-				RDFNode v = soln.get("v");
-				System.out.println(t + " " + v);
+			switch (key) {
+				case "air_temperature":
+					String air = "?m rdf:type ns:Mesure.?m ns:air_temperature ?t FILTER( ?t > " + '"' + mapp.get(key)
+							+ '"' + "^^xsd:double).";
+					q += air;
+					break;
+				case "humidity":
+					String humidity = "?m rdf:type ns:Mesure.?m ns:humidity ?h FILTER( ?h > " + '"' + mapp.get(key)
+							+ '"' + "^^xsd:double).";
+					q += humidity;
+					break;
+				case "rain_intensity":
+					String req_rain = mapp.get(key).equals("oui") ? "raining" : "notRaining";
+					String rain_intensity = "?m rdf:type ns:" + req_rain + ". ?m ns:" + key + "?r.";
+					q += rain_intensity;
+					break;
+				case "wind_speed":
+					String req_wind_speed = mapp.get(key).equals("oui") ? "winding" : "notWinding";
+					String wind_speed = "?m rdf:type ns:" + req_wind_speed + ". ?m ns:" + key + "?w.";
+					q += wind_speed;
+					break;
+				case "solar_radiation":
+					String req_solar_radiation = mapp.get(key).equals("oui") ? "sunny" : "notSunny";
+					String solar_radiation = "?m rdf:type ns:" + req_solar_radiation + ". ?m ns:" + key + "?s.";
+					q += solar_radiation;
+					break;
+				default:
+					break;
 			}
 
+		}
+		q += "}";
+		System.out.println(prefix + q);
+		Query query = QueryFactory.create(prefix + q);
+		QueryExecution qe = QueryExecutionFactory.create(query, inferedModel);
+		com.hp.hpl.jena.query.ResultSet results = qe.execSelect();
+		int compt = 0;
+		for (; results.hasNext();) {
+			compt++;
+			QuerySolution soln = results.nextSolution();
+			RDFNode m = soln.get("m");
+			RDFNode t = soln.get("t");
+			RDFNode h = soln.get("h");
+			RDFNode r = soln.get("r");
+			RDFNode w = soln.get("w");
+			RDFNode s = soln.get("s");
+			System.out.println(m + " " + t + " " + h + "" + r + " " + w + " " + s);
+		}
+		if (compt == 0) {
+			System.out.println("Cette plage n'est pas faites pour vous");
 		}
 	}
 }
