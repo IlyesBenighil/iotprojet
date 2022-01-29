@@ -27,3 +27,6 @@
 
 @include <OWL>
 [rule1: (?mes rdf:type ns:Mesure) (?mes ns:air_temperature ?val) greaterThan(?val, 18)   ->  (?mes rdf:type ns:isHot)]
+[rule2: (?mes rdf:type ns:Mesure) (?mes ns:rain_intensity ?val) greaterThan(?val,0) -> (?mes rdf:type ns:raining)]
+[rule3: (?mes rdf:type ns:Mesure) (?mes ns:wind_speed ?val) greaterThan(?val,10) -> (?mes rdf:type ns:winding)]
+[rule3: (?mes rdf:type ns:Mesure) (?mes ns:solar_radiation ?val) greaterThan(?val,500) -> (?mes rdf:type ns:sunny)]

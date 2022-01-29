@@ -5,17 +5,30 @@
 
 package com.itsudparis.application;
 
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.vocabulary.ResultSet;
 import com.opencsv.CSVReader;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  *
@@ -43,10 +56,9 @@ public class Main {
 					i++;
 					if (i == 1) {
 						continue;
-					} else if (i > 20) {
+					} else if (i > 100) {
 						break;
 					}
-					System.out.println(csvrow[3].length() != 0 ? csvrow[3] : "0");
 					JenaEngine.createInstanceOfClass(model, NS, "Mesure", csvrow[17]);
 					JenaEngine.updateValueOfDataTypeProperty(model, NS, csvrow[17], "measurement_timestamp",
 							csvrow[1].length() != 0 ? csvrow[1] : "0");
@@ -106,6 +118,49 @@ public class Main {
 		} else {
 			System.out.println("Error when reading model from ontology");
 		}
+		ArrayList<String> listeRep = new ArrayList<>();
+		HashMap<String, String> mapp = new HashMap<String, String>();
+		Scanner myObj = new Scanner(System.in);
+		System.out.println("La plage chicago est elle faites pour vous ?");
+		for (int i = 0; i <= 4; i++) {
+			switch (i) {
+				case 0:
+					System.out.println("Vous voulez une temperature (de l'air) de combien de degre en (C°)?");
+					mapp.put("air_temperature", myObj.nextLine());
+					break;
+				case 1:
+					System.out.println("Le taux d'humidité ?");
+					mapp.put("humidity", myObj.nextLine());
+					break;
+				case 2:
+					System.out.println("Voulez vous de la pluie ? (oui ou non)");
+					mapp.put("rain_intensity", myObj.nextLine());
+					break;
+				case 3:
+					System.out.println("Voulez vous du vent ? (oui ou non)");
+					mapp.put("wind_speed", myObj.nextLine());
+					break;
+				case 4:
+					System.out.println("Voulez vous du soleil ?(oui,non ou un peu) ");
+					mapp.put("solar_radiation", myObj.nextLine());
+					break;
+				default:
+					break;
+			}
+		}
+		String prefix = "PREFIX ns: <http://www.semanticweb.org/ilyes/ontologies/2022/0/iot_tp#> PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ";
+		for (String key : mapp.keySet()) {
+			String q = String.format("SELECT ?t ?v WHERE { ?t  ns:%s ?v}", key);
+			Query query = QueryFactory.create(q);
+			QueryExecution qe = QueryExecutionFactory.create(prefix + query, model);
+			com.hp.hpl.jena.query.ResultSet results = qe.execSelect();
+			for (; results.hasNext();) {
+				QuerySolution soln = results.nextSolution();
+				RDFNode t = soln.get("t");
+				RDFNode v = soln.get("v");
+				System.out.println(t + " " + v);
+			}
 
+		}
 	}
 }
